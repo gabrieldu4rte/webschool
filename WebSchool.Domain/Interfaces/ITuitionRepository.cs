@@ -5,7 +5,7 @@ using WebSchool.Domain.Entities;
 
 namespace WebSchool.Domain.Interfaces
 {
-    internal interface ITuitionRepository
+    public interface ITuitionRepository
     {
         Task<Tuition> GetByIdAsync(int id);
         Task<List<Tuition>> GetAllAsync();
