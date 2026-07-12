@@ -8,7 +8,7 @@ namespace WebSchool.Domain.Entities
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        public int ClassId { get; set; }
+        public int SchoolClassId { get; set; }
         public DateTime TuitionDate { get; set; }
         public DateTime ExpireDate { get; set; }
         public bool Active { get; set; }
