@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="WebSchool.API/WebSchool.API.csproj" />
+  <Project Path="WebSchool.Application/WebSchool.Application.csproj" />
+  <Project Path="WebSchool.Domain/WebSchool.Domain.csproj" />
+  <Project Path="WebSchool.Infra.Data/WebSchool.Infra.Data.csproj" />
+  <Project Path="WebSchool.Infra.Ioc/WebSchool.Infra.Ioc.csproj" />
+</Solution>
