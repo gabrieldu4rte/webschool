@@ -1,36 +1,52 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using WebSchool.Domain.Entities;
 using WebSchool.Domain.Interfaces;
+using WebSchool.Infra.Data.Context;
 
 namespace WebSchool.Infra.Data.Repositories
 {
     public class TuitionRepository : ITuitionRepository
     {
-        public Task<Tuition> AddAsync(Tuition tuition)
+        private readonly ApplicationDbContext _context;
+        public async Task<Tuition> AddAsync(Tuition tuition)
         {
-            throw new NotImplementedException();
+            _context.Tuition.Add(tuition);
+            await _context.SaveChangesAsync();
+            return tuition;
         }
 
-        public Task<Tuition> DeleteAsync(int id)
+        public async Task<Tuition> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var tuition = await _context.Tuition.Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
+            if (tuition == null)
+            {
+                return null;
+            }
+
+            tuition.IsDeleted = true;
+            _context.Tuition.Update(tuition);
+            await _context.SaveChangesAsync();
+            return tuition;
         }
 
-        public Task<List<Tuition>> GetAllAsync()
+        public async Task<List<Tuition>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Tuition.Where(x => x.IsDeleted == false).ToListAsync();
         }
 
-        public Task<Tuition> GetByIdAsync(int id)
+        public async Task<Tuition> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Tuition.Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
         }
 
-        public Task<Tuition> UpdateAsync(Tuition tuition)
+        public async Task<Tuition> UpdateAsync(Tuition tuition)
         {
-            throw new NotImplementedException();
+            _context.Tuition.Update(tuition);
+            await _context.SaveChangesAsync();
+            return tuition;
         }
     }
 }

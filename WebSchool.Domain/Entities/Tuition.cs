@@ -12,6 +12,7 @@ namespace WebSchool.Domain.Entities
         public DateTime TuitionDate { get; set; }
         public DateTime ExpireDate { get; set; }
         public bool Active { get; set; }
+        public bool IsDeleted { get; set; }
 
         public ICollection<Note> Notes { get; set; }
         public User User { get; set; }

@@ -1,36 +1,52 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using WebSchool.Domain.Entities;
 using WebSchool.Domain.Interfaces;
+using WebSchool.Infra.Data.Context;
 
 namespace WebSchool.Infra.Data.Repositories
 {
     public class NoteRepository : INoteRepository
     {
-        public Task<Note> AddAsync(Note note)
+        private readonly ApplicationDbContext _context;
+        public async Task<Note> AddAsync(Note note)
         {
-            throw new NotImplementedException();
+            _context.Note.Add(note);
+            await _context.SaveChangesAsync();
+            return note;
         }
 
-        public Task<Note> DeleteAsync(int id)
+        public async Task<Note> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var note = await _context.Note.Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
+            if (note == null)
+            {
+                return null;
+            }
+
+            note.IsDeleted = true;
+            _context.Note.Update(note);
+            await _context.SaveChangesAsync();
+            return note;
         }
 
-        public Task<List<Note>> GetAllAsync()
+        public async Task<List<Note>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Note.Where(x => x.IsDeleted == false).ToListAsync();
         }
 
-        public Task<Note> GetByIdAsync(int id)
+        public async Task<Note> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Note.Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
         }
 
-        public Task<Note> UpdateAsync(Note note)
+        public async Task<Note> UpdateAsync(Note note)
         {
-            throw new NotImplementedException();
+            _context.Note.Update(note);
+            await _context.SaveChangesAsync();
+            return note;
         }
     }
 }

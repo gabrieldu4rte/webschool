@@ -10,6 +10,7 @@ namespace WebSchool.Domain.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public int CourseId { get; set; }
+        public bool IsDeleted { get; set; }
 
         public ICollection<Tuition> Tuitions { get; set; }
 

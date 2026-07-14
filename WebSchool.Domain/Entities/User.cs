@@ -12,6 +12,7 @@ namespace WebSchool.Domain.Entities
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public string Profile { get; set; }
+        public bool IsDeleted { get; set; }
         public ICollection<Tuition> Tuitions { get; set; }
     }
 }

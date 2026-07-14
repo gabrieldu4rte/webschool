@@ -1,36 +1,52 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using WebSchool.Domain.Entities;
 using WebSchool.Domain.Interfaces;
+using WebSchool.Infra.Data.Context;
 
 namespace WebSchool.Infra.Data.Repositories
 {
     public class SchoolClassRepository : ISchoolClassRepository
     {
-        public Task<SchoolClass> AddAsync(SchoolClass schoolclass)
+        private readonly ApplicationDbContext _context;
+        public async Task<SchoolClass> AddAsync(SchoolClass schoolclass)
         {
-            throw new NotImplementedException();
+            _context.SchoolClass.Add(schoolclass);
+            await _context.SaveChangesAsync();
+            return schoolclass;
         }
 
-        public Task<SchoolClass> DeleteAsync(int id)
+        public async Task<SchoolClass> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var schoolclass = await _context.SchoolClass.Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
+            if (schoolclass == null)
+            {
+                return null;
+            }
+
+            schoolclass.IsDeleted = true;
+            _context.SchoolClass.Update(schoolclass);
+            await _context.SaveChangesAsync();
+            return schoolclass;
         }
 
-        public Task<List<SchoolClass>> GetAllAsync()
+        public async Task<List<SchoolClass>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.SchoolClass.Where(x => x.IsDeleted == false).ToListAsync();
         }
 
-        public Task<SchoolClass> GetByIdAsync(int id)
+        public async Task<SchoolClass> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.SchoolClass.Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
         }
 
-        public Task<SchoolClass> UpdateAsync(SchoolClass schoolclass)
+        public async Task<SchoolClass> UpdateAsync(SchoolClass schoolclass)
         {
-            throw new NotImplementedException();
+            _context.SchoolClass.Update(schoolclass);
+            await _context.SaveChangesAsync();
+            return schoolclass;
         }
     }
 }
