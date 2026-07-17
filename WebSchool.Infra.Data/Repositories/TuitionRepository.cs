@@ -11,6 +11,10 @@ namespace WebSchool.Infra.Data.Repositories
     public class TuitionRepository : ITuitionRepository
     {
         private readonly ApplicationDbContext _context;
+        public TuitionRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
         public async Task<Tuition> AddAsync(Tuition tuition)
         {
             _context.Tuition.Add(tuition);

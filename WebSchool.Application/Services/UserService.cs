@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Webschool.Application.Services
+namespace WebSchool.Application.Services
 {
     public class UserService : IUserService
     {

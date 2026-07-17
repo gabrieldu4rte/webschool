@@ -11,6 +11,11 @@ namespace WebSchool.Infra.Data.Repositories
     public class SchoolClassRepository : ISchoolClassRepository
     {
         private readonly ApplicationDbContext _context;
+        public SchoolClassRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<SchoolClass> AddAsync(SchoolClass schoolclass)
         {
             _context.SchoolClass.Add(schoolclass);
@@ -34,12 +39,12 @@ namespace WebSchool.Infra.Data.Repositories
 
         public async Task<List<SchoolClass>> GetAllAsync()
         {
-            return await _context.SchoolClass.Where(x => x.IsDeleted == false).ToListAsync();
+            return await _context.SchoolClass.Include(x => x.Course).Where(x => x.IsDeleted == false).ToListAsync();
         }
 
         public async Task<SchoolClass> GetByIdAsync(int id)
         {
-            return await _context.SchoolClass.Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
+            return await _context.SchoolClass.Include(x => x.Course).Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<SchoolClass> UpdateAsync(SchoolClass schoolclass)

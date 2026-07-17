@@ -11,6 +11,11 @@ namespace WebSchool.Infra.Data.Repositories
     public class NoteRepository : INoteRepository
     {
         private readonly ApplicationDbContext _context;
+
+        public NoteRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
         public async Task<Note> AddAsync(Note note)
         {
             _context.Note.Add(note);

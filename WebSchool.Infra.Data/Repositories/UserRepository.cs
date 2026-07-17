@@ -11,6 +11,10 @@ namespace WebSchool.Infra.Data.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly ApplicationDbContext _context;
+        public UserRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
         public async Task<User> AddAsync(User user)
         {
             _context.User.Add(user);
