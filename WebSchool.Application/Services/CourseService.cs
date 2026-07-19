@@ -1,10 +1,12 @@
-using WebSchool.Application.Interfaces;
-using WebSchool.Application.DTOs.Course;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using WebSchool.Domain.Interfaces;
+using WebSchool.Application.DTOs.Course;
+using WebSchool.Application.DTOs.SchoolClass;
+using WebSchool.Application.Exceptions;
+using WebSchool.Application.Interfaces;
 using WebSchool.Domain.Entities;
+using WebSchool.Domain.Interfaces;
 
 namespace WebSchool.Application.Services
 {
@@ -38,7 +40,7 @@ namespace WebSchool.Application.Services
         {
             var deletedCourse = await _courseRepository.DeleteAsync(id);
             if (deletedCourse == null)
-                return null;
+                throw new NotFoundException("Curso não encontrado");
             return new CourseGetDTO
             {
                 Id = deletedCourse.Id,
@@ -67,7 +69,7 @@ namespace WebSchool.Application.Services
         {
             var course = await _courseRepository.GetByIdAsync(id);
             if (course == null)
-                return null;
+                throw new NotFoundException("Curso não encontrado");
             return new CourseGetDTO
             {
                 Id = course.Id,
@@ -78,15 +80,14 @@ namespace WebSchool.Application.Services
 
         public async Task<CourseGetDTO> UpdateAsync(CoursePutDTO coursePutDTO)
         {
-            var course = new Course
-            {
-                Id = coursePutDTO.Id,
-                Name = coursePutDTO.Name,
-                Description = coursePutDTO.Description,
-            };
+            var course = await _courseRepository.GetByIdAsync(coursePutDTO.Id);
+            if (course == null)
+                throw new NotFoundException("Curso não encontrado");
+
+            course.Name = coursePutDTO.Name;
+            course.Description = coursePutDTO.Description;
+
             var updatedCourse = await _courseRepository.UpdateAsync(course);
-            if (updatedCourse == null)
-                return null;
             return new CourseGetDTO
             {
                 Id = updatedCourse.Id,

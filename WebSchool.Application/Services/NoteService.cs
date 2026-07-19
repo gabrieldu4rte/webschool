@@ -1,10 +1,11 @@
-using WebSchool.Application.DTOs.Note;
-using WebSchool.Application.Interfaces;
-using WebSchool.Domain.Entities;
-using WebSchool.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using WebSchool.Application.DTOs.Note;
+using WebSchool.Application.Exceptions;
+using WebSchool.Application.Interfaces;
+using WebSchool.Domain.Entities;
+using WebSchool.Domain.Interfaces;
 
 namespace WebSchool.Application.Services
 {
@@ -41,7 +42,7 @@ namespace WebSchool.Application.Services
         {
             var deletedNote = await _noteRepository.DeleteAsync(id);
             if (deletedNote == null)
-                return null;
+                throw new NotFoundException("Nota não encontrada");
             return new NoteGetDTO
             {
                 Id = deletedNote.Id,
@@ -74,7 +75,7 @@ namespace WebSchool.Application.Services
         {
             var note = await _noteRepository.GetByIdAsync(id);
             if (note == null)
-                return null;
+                throw new NotFoundException("Nota não encontrada");
             return new NoteGetDTO
             {
                 Id = note.Id,
@@ -89,9 +90,11 @@ namespace WebSchool.Application.Services
         {
             var note = await _noteRepository.GetByIdAsync(notePutDTO.Id);
             if (note == null)
-                return null;
+                throw new NotFoundException("Nota não encontrada");
+
             note.NoteValue = notePutDTO.NoteValue;
             note.Aproved = notePutDTO.NoteValue >= 60;
+
             var updatedNote = await _noteRepository.UpdateAsync(note);
             return new NoteGetDTO
             {

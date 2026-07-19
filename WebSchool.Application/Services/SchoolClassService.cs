@@ -6,25 +6,32 @@ using System.Text;
 using WebSchool.Application.Interfaces;
 using WebSchool.Application.DTOs.SchoolClass;
 using WebSchool.Application.DTOs.Course;
+using WebSchool.Application.Exceptions;
 
 namespace WebSchool.Application.Services
 {
     public class SchoolClassService : ISchoolClassService
     {
         private readonly ISchoolClassRepository _schoolClassRepository;
+        private readonly ICourseRepository _courseRepository;
 
-        public SchoolClassService(ISchoolClassRepository schoolClassRepository)
+        public SchoolClassService(ISchoolClassRepository schoolClassRepository, ICourseRepository courseRepository)
         {
             _schoolClassRepository = schoolClassRepository;
+            _courseRepository = courseRepository;
         }
 
-        public async Task<SchoolClassGetDTO> AddAsync(SchoolClassPostDTO schoolclass)
+        public async Task<SchoolClassGetDTO> AddAsync(SchoolClassPostDTO schoolClassPostDTO)
         {
+            var course = await _courseRepository.GetByIdAsync(schoolClassPostDTO.CourseId);
+            if (course == null)
+                throw new NotFoundException("Curso não encontrado");
+
             var newSchoolClass = new SchoolClass
             {
-                Name = schoolclass.Name,
-                Description = schoolclass.Description,
-                CourseId = schoolclass.CourseId
+                Name = schoolClassPostDTO.Name,
+                Description = schoolClassPostDTO.Description,
+                CourseId = schoolClassPostDTO.CourseId
             };
 
             var addedSchoolClass = await _schoolClassRepository.AddAsync(newSchoolClass);
@@ -42,7 +49,7 @@ namespace WebSchool.Application.Services
         {
             var deletedSchoolClass = await _schoolClassRepository.DeleteAsync(id);
             if (deletedSchoolClass == null)
-                return null;
+                throw new NotFoundException("Turma não encontrada");
             return new SchoolClassGetDTO
             {
                 Id = deletedSchoolClass.Id,
@@ -75,7 +82,7 @@ namespace WebSchool.Application.Services
         {
             var schoolClass = await _schoolClassRepository.GetByIdAsync(id);
             if (schoolClass == null)
-                return null;
+                throw new NotFoundException("Turma não encontrada");
             return new SchoolClassGetDetailDTO
             {
                 Id = schoolClass.Id,
@@ -90,15 +97,22 @@ namespace WebSchool.Application.Services
             };
         }
 
-        public async Task<SchoolClassGetDTO> UpdateAsync(SchoolClassPutDTO schoolclass)
+        public async Task<SchoolClassGetDTO> UpdateAsync(SchoolClassPutDTO schoolClassPutDTO)
         {
-            var schoolClass = new SchoolClass
+            var schoolClass = await _schoolClassRepository.GetByIdAsync(schoolClassPutDTO.Id);
+            if (schoolClass == null)
             {
-                Id = schoolclass.Id,
-                Name = schoolclass.Name,
-                Description = schoolclass.Description,
-                CourseId = schoolclass.CourseId
-            };
+                throw new NotFoundException("Turma não encontrada");
+            }
+            var course = await _courseRepository.GetByIdAsync(schoolClassPutDTO.CourseId);
+            if (course == null)
+                throw new NotFoundException("Curso não encontrado");
+
+            schoolClass.Id = schoolClassPutDTO.Id;
+            schoolClass.Name = schoolClassPutDTO.Name;
+            schoolClass.Description = schoolClassPutDTO.Description;
+            schoolClass.CourseId = schoolClassPutDTO.CourseId;
+
             var updatedSchoolClass = await _schoolClassRepository.UpdateAsync(schoolClass);
             if (updatedSchoolClass == null)
                 return null;

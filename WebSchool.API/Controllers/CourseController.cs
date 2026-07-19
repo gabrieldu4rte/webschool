@@ -19,10 +19,6 @@ namespace WebSchool.API.Controllers
         public async Task<ActionResult> CreateCourse(CoursePostDTO coursePostDTO)
         {
             var course = await _courseService.AddAsync(coursePostDTO);
-            if (course == null)
-            {
-                return BadRequest("Não foi possível criar o curso.");
-            }
             return Ok(new { message = "Curso criado com sucesso." });
         }
 
@@ -30,10 +26,6 @@ namespace WebSchool.API.Controllers
         public async Task<ActionResult> UpdateCourse(CoursePutDTO coursePutDTO)
         {
             var course = await _courseService.UpdateAsync(coursePutDTO);
-            if (course == null)
-            {
-                return NotFound("Curso não encontrado.");
-            }
             return Ok(new { message = "Curso atualizado com sucesso." });
         }
 
@@ -41,10 +33,6 @@ namespace WebSchool.API.Controllers
         public async Task<ActionResult> DeleteCourse(int id)
         {
             var course = await _courseService.DeleteAsync(id);
-            if (course == null)
-            {
-                return NotFound("Curso não encontrado.");
-            }
             return Ok(new { message = "Curso excluído com sucesso." });
         }
 
@@ -52,10 +40,6 @@ namespace WebSchool.API.Controllers
         public async Task<ActionResult> GetCourseById(int id)
         {
             var course = await _courseService.GetByIdAsync(id);
-            if (course == null)
-            {
-                return NotFound("Curso não encontrado.");
-            }
             return Ok(course);
         }
 

@@ -19,10 +19,6 @@ namespace WebSchool.API.Controllers
         public async Task<ActionResult> CreateNote(NotePostDTO notePostDTO)
         {
             var note = await _noteService.AddAsync(notePostDTO);
-            if (note == null)
-            {
-                return BadRequest("Não foi possível criar a nota.");
-            }
             return Ok(new { message = "Nota criada com sucesso." });
         }
 
@@ -30,10 +26,6 @@ namespace WebSchool.API.Controllers
         public async Task<ActionResult> UpdateNote(NotePutDTO notePutDTO)
         {
             var note = await _noteService.UpdateAsync(notePutDTO);
-            if (note == null)
-            {
-                return NotFound("Nota não encontrada.");
-            }
             return Ok(new { message = "Nota atualizada com sucesso." });
         }
 
@@ -41,10 +33,6 @@ namespace WebSchool.API.Controllers
         public async Task<ActionResult> DeleteNote(int id)
         {
             var note = await _noteService.DeleteAsync(id);
-            if (note == null)
-            {
-                return NotFound("Nota não encontrada.");
-            }
             return Ok(new { message = "Nota excluída com sucesso." });
         }
 
@@ -52,10 +40,6 @@ namespace WebSchool.API.Controllers
         public async Task<ActionResult> GetNoteById(int id)
         {
             var note = await _noteService.GetByIdAsync(id);
-            if (note == null)
-            {
-                return NotFound("Nota não encontrada.");
-            }
             return Ok(note);
         }
 

@@ -1,11 +1,12 @@
-using WebSchool.Application.DTOs.User;
-using WebSchool.Application.Interfaces;
-using WebSchool.Domain.Entities;
-using WebSchool.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using WebSchool.Application.DTOs.User;
+using WebSchool.Application.Exceptions;
+using WebSchool.Application.Interfaces;
+using WebSchool.Domain.Entities;
+using WebSchool.Domain.Interfaces;
 
 namespace WebSchool.Application.Services
 {
@@ -47,7 +48,7 @@ namespace WebSchool.Application.Services
             var deletedUser = await _userRepository.DeleteAsync(id);
             if (deletedUser == null)
             {
-                return null;
+                throw new NotFoundException("Usuário não encontrado");
             }
             return new UserGetDTO
             {
@@ -75,7 +76,7 @@ namespace WebSchool.Application.Services
             var user = await _userRepository.GetByIdAsync(id);
             if (user == null)
             {
-                return null;
+                throw new NotFoundException("Usuário não encontrado");
             }
             return new UserGetDTO
             {
@@ -90,7 +91,7 @@ namespace WebSchool.Application.Services
             var existingUser = await _userRepository.GetByIdAsync(userId);
             if (existingUser == null)
             {
-                return null;
+                throw new NotFoundException("Usuário não encontrado");
             }
 
             existingUser.Name = userPutDTO.Name;

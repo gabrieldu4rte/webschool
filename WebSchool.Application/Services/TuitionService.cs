@@ -4,6 +4,7 @@ using System.Text;
 using WebSchool.Application.DTOs.SchoolClass;
 using WebSchool.Application.DTOs.Tuition;
 using WebSchool.Application.DTOs.User;
+using WebSchool.Application.Exceptions;
 using WebSchool.Application.Interfaces;
 using WebSchool.Domain.Entities;
 using WebSchool.Domain.Interfaces;
@@ -46,7 +47,7 @@ namespace WebSchool.Application.Services
         {
             var deletedTuition = await _tuitionRepository.DeleteAsync(id);
             if (deletedTuition == null)
-                return null;
+                throw new NotFoundException("Matrícula não encontrada");
             return new TuitionGetDTO
             {
                 Id = deletedTuition.Id,
@@ -88,7 +89,7 @@ namespace WebSchool.Application.Services
         {
             var tuition = await _tuitionRepository.GetByIdAsync(id);
             if (tuition == null)
-                return null;
+                throw new NotFoundException("Matrícula não encontrada");
             return new TuitionGetDetailDTO
             {
                 Id = tuition.Id,
@@ -112,15 +113,14 @@ namespace WebSchool.Application.Services
 
         public async Task<TuitionGetDTO> UpdateAsync(TuitionPutDTO tuitionPutDTO)
         {
-            var tuition = new Tuition
-            {
-                Id = tuitionPutDTO.Id,
-                SchoolClassId = tuitionPutDTO.SchoolClassId,
-                ExpireDate = tuitionPutDTO.ExpireDate
-            };
+            var tuition = await _tuitionRepository.GetByIdAsync(tuitionPutDTO.Id);
+            if (tuition == null)
+                throw new NotFoundException("Matrícula não encontrada");
+
+            tuition.SchoolClassId = tuitionPutDTO.SchoolClassId;
+            tuition.ExpireDate = tuitionPutDTO.ExpireDate;
+
             var updatedTuition = await _tuitionRepository.UpdateAsync(tuition);
-            if (updatedTuition == null)
-                return null;
             return new TuitionGetDTO
             {
                 Id = updatedTuition.Id,
