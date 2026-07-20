@@ -14,14 +14,24 @@ namespace WebSchool.Application.Services
     public class TuitionService : ITuitionService
     {
         private readonly ITuitionRepository _tuitionRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly ISchoolClassRepository _schoolClassRepository;
 
-        public TuitionService(ITuitionRepository tuitionRepository)
+        public TuitionService(ITuitionRepository tuitionRepository, IUserRepository userRepository, ISchoolClassRepository schoolClassRepository)
         {
             _tuitionRepository = tuitionRepository;
+            _userRepository = userRepository;
+            _schoolClassRepository = schoolClassRepository;
         }
 
         public async Task<TuitionGetDTO> AddAsync(TuitionPostDTO tuitionPostDTO)
         {
+            if (await _userRepository.GetByIdAsync(tuitionPostDTO.UserId) == null)
+                throw new NotFoundException("Usuário não encontrado");
+            
+            if (await _schoolClassRepository.GetByIdAsync(tuitionPostDTO.SchoolClassId) == null)
+                throw new NotFoundException("Turma não encontrada");
+
             var tuition = new Tuition
             {
                 UserId = tuitionPostDTO.UserId,
@@ -113,9 +123,13 @@ namespace WebSchool.Application.Services
 
         public async Task<TuitionGetDTO> UpdateAsync(TuitionPutDTO tuitionPutDTO)
         {
+
             var tuition = await _tuitionRepository.GetByIdAsync(tuitionPutDTO.Id);
             if (tuition == null)
                 throw new NotFoundException("Matrícula não encontrada");
+
+            if (await _schoolClassRepository.GetByIdAsync(tuitionPutDTO.SchoolClassId) == null)
+                throw new NotFoundException("Turma não encontrada");
 
             tuition.SchoolClassId = tuitionPutDTO.SchoolClassId;
             tuition.ExpireDate = tuitionPutDTO.ExpireDate;

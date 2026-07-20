@@ -12,14 +12,18 @@ namespace WebSchool.Application.Services
     public class NoteService : INoteService
     {
         private readonly INoteRepository _noteRepository;
+        private readonly ITuitionRepository _tuitionRepository;
 
-        public NoteService(INoteRepository noteRepository)
+        public NoteService(INoteRepository noteRepository, ITuitionRepository tuitionRepository)
         {
             _noteRepository = noteRepository;
+            _tuitionRepository = tuitionRepository;
         }
 
         public async Task<NoteGetDTO> AddAsync(NotePostDTO notePostDTO)
         {
+            if (await _tuitionRepository.GetByIdAsync(notePostDTO.TuitionId) == null)
+                throw new NotFoundException("Matrícula não encontrada");
             var note = new Note
             {
                 TuitionId = notePostDTO.TuitionId,
