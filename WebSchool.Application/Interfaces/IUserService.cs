@@ -10,9 +10,9 @@ namespace WebSchool.Application.Interfaces
     {
         Task<UserGetDTO> GetByIdAsync(int id);
         Task<List<UserGetDTO>> GetAllAsync();
-
         Task<UserGetDTO> AddAsync(UserPostDTO user);
         Task<UserGetDTO> UpdateAsync(int userId, UserPutDTO user);
         Task<UserGetDTO> DeleteAsync(int id);
+        Task<bool> ExistUserAsync();
     }
 }

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\WebSchool.Application\WebSchool.Application.csproj" />
     <ProjectReference Include="..\WebSchool.Domain\WebSchool.Domain.csproj" />
     <ProjectReference Include="..\WebSchool.Infra.Data\WebSchool.Infra.Data.csproj" />

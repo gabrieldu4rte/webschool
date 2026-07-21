@@ -36,6 +36,11 @@ namespace WebSchool.Infra.Data.Repositories
             return user;
         }
 
+        public async Task<bool> ExistUserAsync()
+        {
+            return await _context.User.AnyAsync(x => x.IsDeleted == false);
+        }
+
         public async Task<List<User>> GetAllAsync()
         {
             return await _context.User.Where(x => x.IsDeleted == false).ToListAsync();

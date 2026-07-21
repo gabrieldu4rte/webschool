@@ -25,6 +25,8 @@ namespace WebSchool.Application.Services
             byte[] passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userPostDTO.Password));
             byte[] passwordSalt = hmac.Key;
 
+            var existingUser = await _userRepository.ExistUserAsync();
+
             var newUser = new User
             {
                 Name = userPostDTO.Name,
@@ -32,14 +34,15 @@ namespace WebSchool.Application.Services
                 IsDeleted = false,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-                Profile = "Aluno"
+                Profile = existingUser ? "Aluno" : "Administrador"
             };
             var addedUser = await _userRepository.AddAsync(newUser);
             return new UserGetDTO
             {
                 Id = addedUser.Id,
                 Name = addedUser.Name,
-                Email = addedUser.Email
+                Email = addedUser.Email,
+                Profile = addedUser.Profile
             };
         }
 
@@ -54,8 +57,14 @@ namespace WebSchool.Application.Services
             {
                 Id = deletedUser.Id,
                 Name = deletedUser.Name,
-                Email = deletedUser.Email
+                Email = deletedUser.Email,
+                Profile = deletedUser.Profile
             };
+        }
+
+        public async Task<bool> ExistUserAsync()
+        {
+            return await _userRepository.ExistUserAsync();
         }
 
         public async Task<List<UserGetDTO>> GetAllAsync()
@@ -66,7 +75,8 @@ namespace WebSchool.Application.Services
             {
                 Id = user.Id,
                 Name = user.Name,
-                Email = user.Email
+                Email = user.Email,
+                Profile = user.Profile
             }));
             return userDTOs;
         }
@@ -82,7 +92,8 @@ namespace WebSchool.Application.Services
             {
                 Id = user.Id,
                 Name = user.Name,
-                Email = user.Email
+                Email = user.Email,
+                Profile = user.Profile
             };
         }
 
@@ -101,7 +112,8 @@ namespace WebSchool.Application.Services
             {
                 Id = updatedUser.Id,
                 Name = updatedUser.Name,
-                Email = updatedUser.Email
+                Email = updatedUser.Email,
+                Profile = updatedUser.Profile
             };
         }
     }
