@@ -1,11 +1,13 @@
-﻿using WebSchool.Application.Interfaces;
-using WebSchool.Application.DTOs.Tuition;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebSchool.Application.DTOs.Tuition;
+using WebSchool.Application.Interfaces;
 
 namespace WebSchool.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Administrador")]
     public class TuitionController : Controller
     {
         private readonly ITuitionService _tuitionService;

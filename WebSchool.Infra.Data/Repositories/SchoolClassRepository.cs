@@ -47,6 +47,14 @@ namespace WebSchool.Infra.Data.Repositories
             return await _context.SchoolClass.Include(x => x.Course).Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
         }
 
+        public async Task<List<SchoolClass>> GetSchoolClassesByUser(int userId)
+        {
+            return await _context.SchoolClass
+                .Include(s => s.Course)
+                .Where(s => s.IsDeleted == false && s.Tuitions.Any(t => t.UserId == userId))
+                .ToListAsync();
+        }
+
         public async Task<SchoolClass> UpdateAsync(SchoolClass schoolclass)
         {
             _context.SchoolClass.Update(schoolclass);

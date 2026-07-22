@@ -47,6 +47,11 @@ namespace WebSchool.Infra.Data.Repositories
             return await _context.Note.Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
         }
 
+        public async Task<List<Note>> GetNotesBySchoolClassUser(int schoolClassId, int userId)
+        {
+            return await _context.Note.Where(x => x.IsDeleted == false && x.Tuition.SchoolClassId == schoolClassId && x.Tuition.UserId == userId).ToListAsync();
+        }
+
         public async Task<Note> UpdateAsync(Note note)
         {
             _context.Note.Update(note);

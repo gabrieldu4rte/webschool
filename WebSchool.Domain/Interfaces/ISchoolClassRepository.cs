@@ -13,5 +13,6 @@ namespace WebSchool.Domain.Interfaces
         Task<SchoolClass> AddAsync(SchoolClass schoolclass);
         Task<SchoolClass> UpdateAsync(SchoolClass schoolclass);
         Task<SchoolClass> DeleteAsync(int id);
+        Task<List<SchoolClass>> GetSchoolClassesByUser(int userId);
     }
 }

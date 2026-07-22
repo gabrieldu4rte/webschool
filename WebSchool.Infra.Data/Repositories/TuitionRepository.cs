@@ -38,7 +38,7 @@ namespace WebSchool.Infra.Data.Repositories
 
         public async Task<List<Tuition>> GetAllAsync()
         {
-            return await _context.Tuition.Where(x => x.IsDeleted == false).ToListAsync();
+            return await _context.Tuition.Include(x => x.User).Include(x => x.SchoolClass).Where(x => x.IsDeleted == false).ToListAsync();
         }
 
         public async Task<Tuition> GetByIdAsync(int id)

@@ -1,6 +1,8 @@
 ﻿using WebSchool.Application.Interfaces;
 using WebSchool.Application.DTOs.Note;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using WebSchool.Infra.Ioc;
 
 namespace WebSchool.API.Controllers
 {
@@ -16,6 +18,7 @@ namespace WebSchool.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> CreateNote(NotePostDTO notePostDTO)
         {
             var note = await _noteService.AddAsync(notePostDTO);
@@ -23,6 +26,7 @@ namespace WebSchool.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> UpdateNote(NotePutDTO notePutDTO)
         {
             var note = await _noteService.UpdateAsync(notePutDTO);
@@ -30,6 +34,7 @@ namespace WebSchool.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> DeleteNote(int id)
         {
             var note = await _noteService.DeleteAsync(id);
@@ -37,6 +42,7 @@ namespace WebSchool.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> GetNoteById(int id)
         {
             var note = await _noteService.GetByIdAsync(id);
@@ -44,9 +50,18 @@ namespace WebSchool.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> GetAllNotes()
         {
             var notes = await _noteService.GetAllAsync();
+            return Ok(notes);
+        }
+        [HttpGet("user/turma/{id}")]
+        [Authorize(Roles = "Aluno, Administrador")]
+        public async Task<ActionResult> GetAllNotesByGetNotesBySchoolClassUser(int id)
+        {
+            var userId = User.GetUserId();
+            var notes = await _noteService.GetNotesBySchoolClassUser(id, userId);
             return Ok(notes);
         }
     }

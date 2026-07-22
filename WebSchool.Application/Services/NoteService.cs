@@ -29,7 +29,7 @@ namespace WebSchool.Application.Services
                 TuitionId = notePostDTO.TuitionId,
                 NoteValue = notePostDTO.NoteValue,
                 Aproved = notePostDTO.NoteValue >= 60,
-                NoteDate = DateTime.Now
+                NoteDate = DateTime.UtcNow
             };
             var addedNote = await _noteRepository.AddAsync(note);
             return new NoteGetDTO
@@ -88,6 +88,24 @@ namespace WebSchool.Application.Services
                 Aproved = note.Aproved,
                 NoteDate = note.NoteDate
             };
+        }
+
+        public async Task<List<NoteGetDTO>> GetNotesBySchoolClassUser(int schoolClassId, int userId)
+        {
+            var notes = await _noteRepository.GetNotesBySchoolClassUser(schoolClassId, userId);
+            var noteDTOs = new List<NoteGetDTO>();
+            foreach (var note in notes) 
+            {
+                noteDTOs.Add(new NoteGetDTO
+                {
+                    Id = note.Id,
+                    TuitionId = note.TuitionId,
+                    NoteValue = note.NoteValue,
+                    Aproved = note.Aproved,
+                    NoteDate = note.NoteDate
+                });
+            }
+            return noteDTOs;
         }
 
         public async Task<NoteGetDTO> UpdateAsync(NotePutDTO notePutDTO)

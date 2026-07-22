@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebSchool.Application.DTOs.SchoolClass;
 using WebSchool.Application.Interfaces;
+using WebSchool.Infra.Ioc;
 
 namespace WebSchool.API.Controllers
 {
@@ -15,6 +17,7 @@ namespace WebSchool.API.Controllers
             _schoolClassService = schoolClassService;
         }
         [HttpPost]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> CreateSchoolClass(SchoolClassPostDTO schoolClassPostDTO)
         {
             var createdSchoolClass = await _schoolClassService.AddAsync(schoolClassPostDTO);
@@ -22,6 +25,7 @@ namespace WebSchool.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> UpdateSchoolClass(SchoolClassPutDTO schoolClassPutDTO)
         {
             var updatedSchoolClass = await _schoolClassService.UpdateAsync(schoolClassPutDTO);
@@ -29,6 +33,7 @@ namespace WebSchool.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> DeleteSchoolClass(int id)
         {
             var deletedSchoolClass = await _schoolClassService.DeleteAsync(id);
@@ -36,6 +41,7 @@ namespace WebSchool.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> GetSchoolClassById(int id)
         {
             var schoolClass = await _schoolClassService.GetByIdAsync(id);
@@ -43,9 +49,19 @@ namespace WebSchool.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> GetAllSchoolClasses()
         {
             var schoolClasses = await _schoolClassService.GetAllAsync();
+            return Ok(schoolClasses);
+        }
+
+        [HttpGet("user")]
+        [Authorize(Roles = "Aluno, Administrador")]
+        public async Task<ActionResult> GetAllSchoolClassesByUser()
+        {
+            var userId = User.GetUserId();
+            var schoolClasses = await _schoolClassService.GetSchoolClassesByUser(userId);
             return Ok(schoolClasses);
         }
     }

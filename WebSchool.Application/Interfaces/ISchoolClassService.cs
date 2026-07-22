@@ -14,5 +14,7 @@ namespace WebSchool.Application.Interfaces
         Task<SchoolClassGetDTO> AddAsync(SchoolClassPostDTO schoolclass);
         Task<SchoolClassGetDTO> UpdateAsync(SchoolClassPutDTO schoolclass);
         Task<SchoolClassGetDTO> DeleteAsync(int id);
+        Task<List<SchoolClassGetDetailDTO>> GetSchoolClassesByUser(int userId);
+        
     }
 }
