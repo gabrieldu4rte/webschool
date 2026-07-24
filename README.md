@@ -20,7 +20,6 @@ This project is a test for studying the C# language and the .NET framework, as w
 - [Docker](#docker)
 - [Code Conventions](#code-conventions)
 - [Contributing](#contributing)
-- [License](#license)
 - [Author](#author)
 
 ## Overview
@@ -158,7 +157,7 @@ DB_PORT=5432
 DB_NAME=WebSchool
 
 # JWT
-JWT_SECRET_KEY=SADsdhdgasd3unx38nvxxzAacxx@E38e0-4-1';[p[]];'
+JWT_SECRET_KEY="Your Key Here"
 JWT_ISSUER=webschool-api
 JWT_AUDIENCE=webschool-frontend
 ```
@@ -383,7 +382,7 @@ dotnet test
 dotnet test WebSchool.Application.Tests
 ```
 
-### Explore the API
+### API Endpoints
 
 After starting the application, visit:
 
