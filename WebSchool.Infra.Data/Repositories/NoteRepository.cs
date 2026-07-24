@@ -52,7 +52,7 @@ namespace WebSchool.Infra.Data.Repositories
 
         public async Task<PagedList<Note>> GetNotesBySchoolClassUser(int schoolClassId, int userId, int pageNumber, int pageSize)
         {
-            var query = _context.Note.Where(x => x.IsDeleted == false && x.Tuition.SchoolClassId == schoolClassId && x.Tuition.UserId == userId).AsNoTracking();
+            var query = _context.Note.Where(x => x.IsDeleted == false && x.Tuition.SchoolClassId == schoolClassId && x.Tuition.UserId == userId && x.Tuition.IsDeleted == false).AsNoTracking();
             return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }
 

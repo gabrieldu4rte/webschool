@@ -46,7 +46,7 @@ namespace WebSchool.Infra.Data.Repositories
 
         public async Task<Tuition> GetByIdAsync(int id)
         {
-            return await _context.Tuition.Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
+            return await _context.Tuition.Include(x => x.User).Include(x => x.SchoolClass).Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<Tuition> UpdateAsync(Tuition tuition)

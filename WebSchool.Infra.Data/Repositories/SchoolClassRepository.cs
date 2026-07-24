@@ -54,7 +54,7 @@ namespace WebSchool.Infra.Data.Repositories
         {
             var query = _context.SchoolClass
                 .Include(s => s.Course)
-                .Where(s => s.IsDeleted == false && s.Tuitions.Any(t => t.UserId == userId))
+                .Where(s => s.IsDeleted == false && s.Tuitions.Any(t => t.UserId == userId && t.IsDeleted == false && t.Active == true))
                 .AsNoTracking();
             return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }

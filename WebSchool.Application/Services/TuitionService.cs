@@ -85,12 +85,14 @@ namespace WebSchool.Application.Services
                     Id = tuition.User.Id,
                     Name = tuition.User.Name,
                     Email = tuition.User.Email,
+                    Profile = tuition.User.Profile,
                 },
                 SchoolClass = new SchoolClassGetDTO
                 {
                     Id = tuition.SchoolClass.Id,
                     Name = tuition.SchoolClass.Name,
-                    Description = tuition.SchoolClass.Description
+                    Description = tuition.SchoolClass.Description,
+                    CourseId = tuition.SchoolClass.CourseId,
                 }
             }));
             return new PagedList<TuitionGetDetailDTO>(tuitionGetDetailDTO, tuitions.CurrentPage, tuitions.PageSize, tuitions.TotalCount);
@@ -112,12 +114,14 @@ namespace WebSchool.Application.Services
                     Id = tuition.User.Id,
                     Name = tuition.User.Name,
                     Email = tuition.User.Email,
+                    Profile = tuition.User.Profile,
                 },
                 SchoolClass = new SchoolClassGetDTO
                 {
                     Id = tuition.SchoolClass.Id,
                     Name = tuition.SchoolClass.Name,
-                    Description = tuition.SchoolClass.Description
+                    Description = tuition.SchoolClass.Description,
+                    CourseId = tuition.SchoolClass.CourseId,
                 }
             };
         }
