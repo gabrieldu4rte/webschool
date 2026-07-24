@@ -2,7 +2,7 @@
 
 A robust and scalable REST API for comprehensive school management systems, built with layered architecture and .NET 10.
 This project is a test for studying the C# language and the .NET framework, as well as Clean Architecture.
-[GitHub](https://github.com/gabrieldu4rte/WebSchool) | [.NET 10.0](https://dotnet.microsoft.com/) | [MIT License](LICENSE)
+[GitHub](https://github.com/gabrieldu4rte/WebSchool) | [.NET 10.0](https://dotnet.microsoft.com/)
 
 ## Table of Contents
 
