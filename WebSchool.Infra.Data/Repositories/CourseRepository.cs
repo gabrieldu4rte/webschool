@@ -5,7 +5,9 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using WebSchool.Domain.Entities;
 using WebSchool.Domain.Interfaces;
+using WebSchool.Domain.Pagination;
 using WebSchool.Infra.Data.Context;
+using WebSchool.Infra.Data.Helpers;
 
 namespace WebSchool.Infra.Data.Repositories
 {
@@ -37,9 +39,10 @@ namespace WebSchool.Infra.Data.Repositories
             return course;
         }
 
-        public async Task<List<Course>> GetAllAsync()
+        public async Task<PagedList<Course>> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await _context.Course.Where(x => x.IsDeleted == false).ToListAsync();
+            var query = _context.Course.Where( x => x.IsDeleted == false).AsNoTracking();
+            return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }
 
         public async Task<Course> GetByIdAsync(int id)

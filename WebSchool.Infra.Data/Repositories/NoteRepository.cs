@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using WebSchool.Domain.Entities;
 using WebSchool.Domain.Interfaces;
+using WebSchool.Domain.Pagination;
 using WebSchool.Infra.Data.Context;
+using WebSchool.Infra.Data.Helpers;
 
 namespace WebSchool.Infra.Data.Repositories
 {
@@ -37,9 +39,10 @@ namespace WebSchool.Infra.Data.Repositories
             return note;
         }
 
-        public async Task<List<Note>> GetAllAsync()
+        public async Task<PagedList<Note>> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await _context.Note.Where(x => x.IsDeleted == false).ToListAsync();
+            var query = _context.Note.Where(x => x.IsDeleted == false).AsNoTracking();
+            return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }
 
         public async Task<Note> GetByIdAsync(int id)
@@ -47,9 +50,10 @@ namespace WebSchool.Infra.Data.Repositories
             return await _context.Note.Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<List<Note>> GetNotesBySchoolClassUser(int schoolClassId, int userId)
+        public async Task<PagedList<Note>> GetNotesBySchoolClassUser(int schoolClassId, int userId, int pageNumber, int pageSize)
         {
-            return await _context.Note.Where(x => x.IsDeleted == false && x.Tuition.SchoolClassId == schoolClassId && x.Tuition.UserId == userId).ToListAsync();
+            var query = _context.Note.Where(x => x.IsDeleted == false && x.Tuition.SchoolClassId == schoolClassId && x.Tuition.UserId == userId).AsNoTracking();
+            return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }
 
         public async Task<Note> UpdateAsync(Note note)

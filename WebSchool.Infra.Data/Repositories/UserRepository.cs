@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using WebSchool.Domain.Entities;
 using WebSchool.Domain.Interfaces;
+using WebSchool.Domain.Pagination;
 using WebSchool.Infra.Data.Context;
+using WebSchool.Infra.Data.Helpers;
 
 namespace WebSchool.Infra.Data.Repositories
 {
@@ -41,9 +43,10 @@ namespace WebSchool.Infra.Data.Repositories
             return await _context.User.AnyAsync(x => x.IsDeleted == false);
         }
 
-        public async Task<List<User>> GetAllAsync()
+        public async Task<PagedList<User>> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await _context.User.Where(x => x.IsDeleted == false).ToListAsync();
+            var query = _context.User.Where(x => x.IsDeleted == false).AsNoTracking();
+            return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }
 
         public async Task<User> GetByIdAsync(int id)

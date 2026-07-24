@@ -1,7 +1,10 @@
-﻿using WebSchool.Application.Interfaces;
-using WebSchool.Application.DTOs.Note;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+using WebSchool.API.Extensions;
+using WebSchool.API.Models;
+using WebSchool.Application.DTOs.Note;
+using WebSchool.Application.Interfaces;
+using WebSchool.Domain.Entities;
 using WebSchool.Infra.Ioc;
 
 namespace WebSchool.API.Controllers
@@ -51,17 +54,19 @@ namespace WebSchool.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Administrador")]
-        public async Task<ActionResult> GetAllNotes()
+        public async Task<ActionResult> GetAllNotes([FromQuery] PaginationParams paginationParams)
         {
-            var notes = await _noteService.GetAllAsync();
+            var notes = await _noteService.GetAllAsync(paginationParams.PageNumber, paginationParams.PageSize);
+            Response.AddPaginationHeader(new PaginationHeader(paginationParams.PageNumber, paginationParams.PageSize, notes.TotalCount, notes.TotalPages));
             return Ok(notes);
         }
         [HttpGet("user/turma/{id}")]
         [Authorize(Roles = "Aluno, Administrador")]
-        public async Task<ActionResult> GetAllNotesByGetNotesBySchoolClassUser(int id)
+        public async Task<ActionResult> GetAllNotesBySchoolClassUser([FromQuery] PaginationParams paginationParams, int id)
         {
             var userId = User.GetUserId();
-            var notes = await _noteService.GetNotesBySchoolClassUser(id, userId);
+            var notes = await _noteService.GetNotesBySchoolClassUser(paginationParams.PageNumber, paginationParams.PageSize, id, userId);
+            Response.AddPaginationHeader(new PaginationHeader(paginationParams.PageNumber, paginationParams.PageSize, notes.TotalCount, notes.TotalPages));
             return Ok(notes);
         }
     }

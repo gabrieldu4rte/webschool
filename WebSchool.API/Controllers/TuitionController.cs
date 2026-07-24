@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebSchool.API.Extensions;
+using WebSchool.API.Models;
 using WebSchool.Application.DTOs.Tuition;
 using WebSchool.Application.Interfaces;
+using WebSchool.Domain.Entities;
 
 namespace WebSchool.API.Controllers
 {
@@ -46,9 +49,10 @@ namespace WebSchool.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAllTuitions()
+        public async Task<ActionResult> GetAllTuitions([FromQuery] PaginationParams paginationParams)
         {
-            var tuitions = await _tuitionService.GetAllAsync();
+            var tuitions = await _tuitionService.GetAllAsync(paginationParams.PageNumber, paginationParams.PageSize);
+            Response.AddPaginationHeader(new PaginationHeader(paginationParams.PageNumber, paginationParams.PageSize, tuitions.TotalCount, tuitions.TotalPages));
             return Ok(tuitions);
 
         }

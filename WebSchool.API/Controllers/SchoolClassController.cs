@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebSchool.API.Extensions;
+using WebSchool.API.Models;
 using WebSchool.Application.DTOs.SchoolClass;
 using WebSchool.Application.Interfaces;
+using WebSchool.Domain.Entities;
 using WebSchool.Infra.Ioc;
 
 namespace WebSchool.API.Controllers
@@ -50,18 +53,20 @@ namespace WebSchool.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Administrador")]
-        public async Task<ActionResult> GetAllSchoolClasses()
+        public async Task<ActionResult> GetAllSchoolClasses([FromQuery] PaginationParams paginationParams)
         {
-            var schoolClasses = await _schoolClassService.GetAllAsync();
+            var schoolClasses = await _schoolClassService.GetAllAsync(paginationParams.PageNumber, paginationParams.PageSize);
+            Response.AddPaginationHeader(new PaginationHeader(paginationParams.PageNumber, paginationParams.PageSize, schoolClasses.TotalCount, schoolClasses.TotalPages));
             return Ok(schoolClasses);
         }
 
         [HttpGet("user")]
         [Authorize(Roles = "Aluno, Administrador")]
-        public async Task<ActionResult> GetAllSchoolClassesByUser()
+        public async Task<ActionResult> GetAllSchoolClassesByUser([FromQuery] PaginationParams paginationParams)
         {
             var userId = User.GetUserId();
-            var schoolClasses = await _schoolClassService.GetSchoolClassesByUser(userId);
+            var schoolClasses = await _schoolClassService.GetSchoolClassesByUser(paginationParams.PageNumber, paginationParams.PageSize, userId);
+            Response.AddPaginationHeader(new PaginationHeader(paginationParams.PageNumber, paginationParams.PageSize, schoolClasses.TotalCount, schoolClasses.TotalPages));
             return Ok(schoolClasses);
         }
     }

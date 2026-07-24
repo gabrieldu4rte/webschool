@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using WebSchool.Application.DTOs.Tuition;
 using WebSchool.Application.DTOs.User;
 using WebSchool.Application.Exceptions;
 using WebSchool.Application.Interfaces;
 using WebSchool.Domain.Entities;
 using WebSchool.Domain.Interfaces;
+using WebSchool.Domain.Pagination;
 
 namespace WebSchool.Application.Services
 {
@@ -67,9 +69,9 @@ namespace WebSchool.Application.Services
             return await _userRepository.ExistUserAsync();
         }
 
-        public async Task<List<UserGetDTO>> GetAllAsync()
+        public async Task<PagedList<UserGetDTO>> GetAllAsync(int pageNumber, int pageSize)
         {
-            var users = await _userRepository.GetAllAsync();
+            var users = await _userRepository.GetAllAsync(pageNumber, pageSize);
             var userDTOs = new List<UserGetDTO>();
             userDTOs.AddRange(users.Select(user => new UserGetDTO
             {
@@ -78,7 +80,7 @@ namespace WebSchool.Application.Services
                 Email = user.Email,
                 Profile = user.Profile
             }));
-            return userDTOs;
+            return new PagedList<UserGetDTO>(userDTOs, users.CurrentPage, users.PageSize, users.TotalCount);
         }
 
         public async Task<UserGetDTO> GetByIdAsync(int id)

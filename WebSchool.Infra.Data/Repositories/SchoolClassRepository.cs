@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using WebSchool.Domain.Entities;
 using WebSchool.Domain.Interfaces;
+using WebSchool.Domain.Pagination;
 using WebSchool.Infra.Data.Context;
+using WebSchool.Infra.Data.Helpers;
 
 namespace WebSchool.Infra.Data.Repositories
 {
@@ -37,9 +39,10 @@ namespace WebSchool.Infra.Data.Repositories
             return schoolclass;
         }
 
-        public async Task<List<SchoolClass>> GetAllAsync()
+        public async Task<PagedList<SchoolClass>> GetAllAsync( int pageNumber, int pageSize)
         {
-            return await _context.SchoolClass.Include(x => x.Course).Where(x => x.IsDeleted == false).ToListAsync();
+            var query= _context.SchoolClass.Include(x => x.Course).Where(x => x.IsDeleted == false).AsNoTracking();
+            return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }
 
         public async Task<SchoolClass> GetByIdAsync(int id)
@@ -47,12 +50,13 @@ namespace WebSchool.Infra.Data.Repositories
             return await _context.SchoolClass.Include(x => x.Course).Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<List<SchoolClass>> GetSchoolClassesByUser(int userId)
+        public async Task<PagedList<SchoolClass>> GetSchoolClassesByUser(int userId, int pageNumber, int pageSize)
         {
-            return await _context.SchoolClass
+            var query = _context.SchoolClass
                 .Include(s => s.Course)
                 .Where(s => s.IsDeleted == false && s.Tuitions.Any(t => t.UserId == userId))
-                .ToListAsync();
+                .AsNoTracking();
+            return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }
 
         public async Task<SchoolClass> UpdateAsync(SchoolClass schoolclass)

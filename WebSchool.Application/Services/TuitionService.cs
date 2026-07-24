@@ -8,6 +8,7 @@ using WebSchool.Application.Exceptions;
 using WebSchool.Application.Interfaces;
 using WebSchool.Domain.Entities;
 using WebSchool.Domain.Interfaces;
+using WebSchool.Domain.Pagination;
 
 namespace WebSchool.Application.Services
 {
@@ -69,9 +70,9 @@ namespace WebSchool.Application.Services
             };
         }
 
-        public async Task<List<TuitionGetDetailDTO>> GetAllAsync()
+        public async Task<PagedList<TuitionGetDetailDTO>> GetAllAsync(int pageNumber, int pageSize)
         {
-            var tuitions = await _tuitionRepository.GetAllAsync();
+            var tuitions = await _tuitionRepository.GetAllAsync(pageNumber, pageSize);
             var tuitionGetDetailDTO = new List<TuitionGetDetailDTO>();
             tuitionGetDetailDTO.AddRange(tuitions.Select(tuition => new TuitionGetDetailDTO
             {
@@ -92,7 +93,7 @@ namespace WebSchool.Application.Services
                     Description = tuition.SchoolClass.Description
                 }
             }));
-            return tuitionGetDetailDTO;
+            return new PagedList<TuitionGetDetailDTO>(tuitionGetDetailDTO, tuitions.CurrentPage, tuitions.PageSize, tuitions.TotalCount);
         }
 
         public async Task<TuitionGetDetailDTO> GetByIdAsync(int id)

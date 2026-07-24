@@ -1,12 +1,14 @@
-using WebSchool.Domain.Entities;
-using WebSchool.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using WebSchool.Application.Interfaces;
-using WebSchool.Application.DTOs.SchoolClass;
 using WebSchool.Application.DTOs.Course;
+using WebSchool.Application.DTOs.Note;
+using WebSchool.Application.DTOs.SchoolClass;
 using WebSchool.Application.Exceptions;
+using WebSchool.Application.Interfaces;
+using WebSchool.Domain.Entities;
+using WebSchool.Domain.Interfaces;
+using WebSchool.Domain.Pagination;
 
 namespace WebSchool.Application.Services
 {
@@ -61,9 +63,9 @@ namespace WebSchool.Application.Services
             };
         }
 
-        public async Task<List<SchoolClassGetDetailDTO>> GetAllAsync()
+        public async Task<PagedList<SchoolClassGetDetailDTO>> GetAllAsync(int pageNumber, int pageSize)
         {
-            var schoolClasses = await _schoolClassRepository.GetAllAsync();
+            var schoolClasses = await _schoolClassRepository.GetAllAsync(pageNumber, pageSize);
             var schoolClassGetDetailDTOs = new List<SchoolClassGetDetailDTO>();
             schoolClassGetDetailDTOs.AddRange(schoolClasses.Select(sc => new SchoolClassGetDetailDTO
             {
@@ -77,7 +79,7 @@ namespace WebSchool.Application.Services
                     Description = sc.Course.Description
                 }
             }));
-            return schoolClassGetDetailDTOs;
+            return new PagedList<SchoolClassGetDetailDTO>(schoolClassGetDetailDTOs, schoolClasses.CurrentPage, schoolClasses.PageSize, schoolClasses.TotalCount);
         }
 
         public async Task<SchoolClassGetDetailDTO> GetByIdAsync(int id)
@@ -99,12 +101,12 @@ namespace WebSchool.Application.Services
             };
         }
 
-        public async Task<List<SchoolClassGetDetailDTO>> GetSchoolClassesByUser(int userId)
+        public async Task<PagedList<SchoolClassGetDetailDTO>> GetSchoolClassesByUser(int userId, int pageNumber, int pageSize)
         {
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
                 throw new NotFoundException("Usuário não encontrado");
-            var schoolClasses = await _schoolClassRepository.GetSchoolClassesByUser(userId);
+            var schoolClasses = await _schoolClassRepository.GetSchoolClassesByUser(userId, pageNumber, pageSize);
             var schoolClassGetDetailDTO = new List<SchoolClassGetDetailDTO>();
             schoolClassGetDetailDTO.AddRange(schoolClasses.Select(schoolClass => new SchoolClassGetDetailDTO 
             { 
@@ -118,7 +120,7 @@ namespace WebSchool.Application.Services
                     Description= schoolClass.Course.Description
                 }
             }));
-            return schoolClassGetDetailDTO;
+            return new PagedList<SchoolClassGetDetailDTO>(schoolClassGetDetailDTO, schoolClasses.CurrentPage, schoolClasses.PageSize, schoolClasses.TotalCount);
         }
 
         public async Task<SchoolClassGetDTO> UpdateAsync(SchoolClassPutDTO schoolClassPutDTO)

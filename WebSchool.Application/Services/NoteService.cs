@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using WebSchool.Application.DTOs.Course;
 using WebSchool.Application.DTOs.Note;
 using WebSchool.Application.Exceptions;
 using WebSchool.Application.Interfaces;
 using WebSchool.Domain.Entities;
 using WebSchool.Domain.Interfaces;
+using WebSchool.Domain.Pagination;
 
 namespace WebSchool.Application.Services
 {
@@ -57,9 +59,9 @@ namespace WebSchool.Application.Services
             };
         }
 
-        public async Task<List<NoteGetDTO>> GetAllAsync()
+        public async Task<PagedList<NoteGetDTO>> GetAllAsync(int pageNumber, int pageSize)
         {
-            var notes = await _noteRepository.GetAllAsync();
+            var notes = await _noteRepository.GetAllAsync(pageNumber, pageSize);
             var noteGetDTOs = new List<NoteGetDTO>();
             foreach (var note in notes)
             {
@@ -72,7 +74,7 @@ namespace WebSchool.Application.Services
                     NoteDate = note.NoteDate
                 });
             }
-            return noteGetDTOs;
+            return new PagedList<NoteGetDTO>(noteGetDTOs, notes.CurrentPage, notes.PageSize, notes.TotalCount);
         }
 
         public async Task<NoteGetDTO> GetByIdAsync(int id)
@@ -90,9 +92,9 @@ namespace WebSchool.Application.Services
             };
         }
 
-        public async Task<List<NoteGetDTO>> GetNotesBySchoolClassUser(int schoolClassId, int userId)
+        public async Task<PagedList<NoteGetDTO>> GetNotesBySchoolClassUser(int schoolClassId, int userId, int pageNumber, int pageSize)
         {
-            var notes = await _noteRepository.GetNotesBySchoolClassUser(schoolClassId, userId);
+            var notes = await _noteRepository.GetNotesBySchoolClassUser(schoolClassId, userId, pageNumber, pageSize);
             var noteDTOs = new List<NoteGetDTO>();
             foreach (var note in notes) 
             {
@@ -105,7 +107,7 @@ namespace WebSchool.Application.Services
                     NoteDate = note.NoteDate
                 });
             }
-            return noteDTOs;
+            return new PagedList<NoteGetDTO>(noteDTOs, notes.CurrentPage, notes.PageSize, notes.TotalCount);
         }
 
         public async Task<NoteGetDTO> UpdateAsync(NotePutDTO notePutDTO)
