@@ -14,8 +14,8 @@ namespace WebSchool.API.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IAuthenticate _authenticate;
-        public UserController(IUserService userService, IAuthenticate authenticate)
+        private readonly IAuthenticateService _authenticate;
+        public UserController(IUserService userService, IAuthenticateService authenticate)
         {
             _userService = userService;
             _authenticate = authenticate;
@@ -24,11 +24,6 @@ namespace WebSchool.API.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateUser(UserPostDTO userPostDTO)
         {
-            var userExists = await _authenticate.UserExists(userPostDTO.Email);
-            if (userExists)
-            {
-                return BadRequest(new { message = "Já existe um usuário utilizando este e-mail" });
-            }
             var user = await _userService.AddAsync(userPostDTO);
             var token = _authenticate.GenerateToken(user.Id, user.Email.ToLower(), user.Profile);
             return Ok(new { Name = user.Name, Token = token });
@@ -37,12 +32,7 @@ namespace WebSchool.API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> GetTokenUser(UserLogin userLogin)
         {
-            var user = await _authenticate.GetUserByEmail(userLogin.Email);
-            if (user == null)
-                return BadRequest(new { message = "Usuário ou senha inválidos." });
-            var validUser = await _authenticate.AuthenticateAsync(userLogin.Email, userLogin.Password);
-            if (!validUser)
-                return BadRequest(new { message = "Usuário ou senha inválidos." });
+            var user = await _authenticate.AuthenticateAsync(userLogin.Email, userLogin.Password);
 
             var token = _authenticate.GenerateToken(user.Id, user.Email.ToLower(), user.Profile);
             return Ok(new { Name = user.Name, Token = token });

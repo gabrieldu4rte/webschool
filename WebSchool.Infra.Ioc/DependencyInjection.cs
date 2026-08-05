@@ -57,7 +57,8 @@ namespace WebSchool.Infra.Ioc
             services.AddScoped<INoteService, NoteService>();
             services.AddScoped<ISchoolClassService, SchoolClassService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IAuthenticate, AuthenticateService>();
+            services.AddScoped<IAuthenticate, AuthenticateProvider>();
+            services.AddScoped<IAuthenticateService, AuthenticateService>();
 
             return services;
         }

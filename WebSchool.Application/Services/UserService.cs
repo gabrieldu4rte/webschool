@@ -23,6 +23,11 @@ namespace WebSchool.Application.Services
 
         public async Task<UserGetDTO> AddAsync(UserPostDTO userPostDTO)
         {
+            var userExists = await _userRepository.UserExists(userPostDTO.Email);
+            if (userExists) {
+                throw new InvalidOperationException("Já existe um usuário utilizando este e-mail");
+            }
+
             using var hmac = new HMACSHA512();
             byte[] passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userPostDTO.Password));
             byte[] passwordSalt = hmac.Key;
@@ -86,6 +91,22 @@ namespace WebSchool.Application.Services
         public async Task<UserGetDTO> GetByIdAsync(int id)
         {
             var user = await _userRepository.GetByIdAsync(id);
+            if (user == null)
+            {
+                throw new NotFoundException("Usuário não encontrado");
+            }
+            return new UserGetDTO
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                Profile = user.Profile
+            };
+        }
+
+        public async Task<UserGetDTO> GetUserByEmail(string email)
+        {
+            var user = await _userRepository.GetUserByEmail(email);
             if (user == null)
             {
                 throw new NotFoundException("Usuário não encontrado");

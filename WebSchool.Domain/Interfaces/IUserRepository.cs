@@ -16,5 +16,7 @@ namespace WebSchool.Domain.Interfaces
         Task<User> DeleteAsync(int id);
 
         Task<bool> ExistUserAsync();
+        Task<User> GetUserByEmail(string email);
+        Task<bool> UserExists(string email);
     }
 }

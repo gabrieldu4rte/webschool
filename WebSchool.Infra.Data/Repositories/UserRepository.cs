@@ -54,11 +54,21 @@ namespace WebSchool.Infra.Data.Repositories
             return await _context.User.Where(x => x.IsDeleted == false && x.Id == id).FirstOrDefaultAsync();
         }
 
+        public async Task<User> GetUserByEmail(string email)
+        {
+            return await _context.User.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower() && u.IsDeleted == false);
+        }
+
         public async Task<User> UpdateAsync(User user)
         {
             _context.User.Update(user);
             await _context.SaveChangesAsync();
             return user;
+        }
+
+        public async Task<bool> UserExists(string email)
+        {
+            return await _context.User.AnyAsync(u => u.Email.ToLower() == email.ToLower() && u.IsDeleted == false);
         }
     }
 }
