@@ -16,5 +16,6 @@ namespace WebSchool.Application.Interfaces
         Task<UserGetDTO> DeleteAsync(int id);
         Task<bool> ExistUserAsync();
         Task<UserGetDTO> GetUserByEmail(string email);
+        Task PasswordChangeAsync(int userId, PasswordChangeDTO passwordChangeDTO);
     }
 }

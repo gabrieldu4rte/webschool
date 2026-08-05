@@ -25,7 +25,7 @@ namespace WebSchool.Application.Services
         {
             var userExists = await _userRepository.UserExists(userPostDTO.Email);
             if (userExists) {
-                throw new InvalidOperationException("Já existe um usuário utilizando este e-mail");
+                throw new BadRequestException("Já existe um usuário utilizando este e-mail");
             }
 
             using var hmac = new HMACSHA512();
@@ -120,6 +120,29 @@ namespace WebSchool.Application.Services
             };
         }
 
+        public async Task PasswordChangeAsync(int userId, PasswordChangeDTO passwordChangeDTO)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null || user.IsDeleted)
+            {
+                throw new NotFoundException("Usuário não encontrado");
+            }
+
+            using var hmac = new HMACSHA512(user.PasswordSalt);
+            var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(passwordChangeDTO.ActualPassword));
+
+            if (!passwordHash.SequenceEqual(user.PasswordHash))
+            {
+                throw new BadRequestException("A senha atual está incorreta");
+            }
+
+            using var newHmac = new HMACSHA512();
+            user.PasswordHash = newHmac.ComputeHash(Encoding.UTF8.GetBytes(passwordChangeDTO.NewPassword));
+            user.PasswordSalt = newHmac.Key;
+            await _userRepository.UpdateAsync(user);
+
+        }
+
         public async Task<UserGetDTO> UpdateAsync(int userId, UserPutDTO userPutDTO)
         {
             var existingUser = await _userRepository.GetByIdAsync(userId);
@@ -129,7 +152,16 @@ namespace WebSchool.Application.Services
             }
 
             existingUser.Name = userPutDTO.Name;
-            existingUser.Email = userPutDTO.Email;
+
+            if (userPutDTO.Email.ToLower() != existingUser.Email.ToLower())
+            {
+                var userExists = await _userRepository.GetUserByEmail(userPutDTO.Email);
+                if (userExists != null)
+                    throw new BadRequestException("Já existe um usuário utilizando este e-mail");
+                existingUser.Email = userPutDTO.Email;
+            }
+
+            
             var updatedUser = await _userRepository.UpdateAsync(existingUser);
             return new UserGetDTO
             {
